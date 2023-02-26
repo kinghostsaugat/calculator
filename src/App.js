@@ -18,7 +18,7 @@ function App() {
 
   const resetClickHandler = () => {
     setScreenData({
-      num: 0,
+      num: "",
       operator: "",
       prevNum: 0,
     });
@@ -26,15 +26,32 @@ function App() {
 
   const invertClickHandler = () => {
     let temp = 0 - parseFloat(screenData.num);
-    setScreenData({num:temp, operator:screenData.operator,prevNum:screenData.prevNum})
+    setScreenData({
+      num: temp,
+      operator: screenData.operator,
+      prevNum: screenData.prevNum,
+    });
   };
 
   const numClickHandler = (e) => {
-    const newNum = {
-      num: screenData.num + e.target.value,
-      operator: screenData.operator,
-      prevNum: parseFloat(screenData.prevNum),
-    };
+    let newNum;
+    if (
+      screenData.num !== "" &&
+      screenData.operator !== "" &&
+      screenData.prevNum === ""
+    ) {
+      newNum = {
+        num: e.target.value,
+        operator: screenData.operator,
+        prevNum: parseFloat(screenData.num),
+      };
+    } else {
+      newNum = {
+        num: screenData.num + e.target.value,
+        operator: screenData.operator,
+        prevNum: parseFloat(screenData.prevNum),
+      };
+    }
     setScreenData(newNum);
   };
 
@@ -45,7 +62,17 @@ function App() {
           operator: e.target.value,
           prevNum: parseFloat(screenData.num),
         })
-      : equalsClickHandler(e);
+      : screenData.operator !== e.target.value && screenData.num === ""
+      ? setScreenData({
+          num: "",
+          operator: e.target.value,
+          prevNum: parseFloat(screenData.prevNum),
+        })
+      : screenData.operator !== "" &&
+        screenData.prevNum !== "" &&
+        screenData.num !== ""
+      ? equalsClickHandler(e)
+      : setScreenData(...setScreenData);
   };
 
   const equalsClickHandler = (e) => {
@@ -62,7 +89,7 @@ function App() {
       : (equals = parseFloat(screenData.num));
 
     let temp2 = {
-      num: equals,
+      num: equals.toString(),
       operator: e.target.value === "=" ? "" : e.target.value,
       prevNum: "",
     };
@@ -72,17 +99,24 @@ function App() {
   const commaClickHandler = (e) => {
     //convert to array
     let decimalNum;
-    let numToArr = String(screenData.num)
-      .split("");
-      numToArr.includes(".")
-      ? decimalNum = screenData.num
-      : decimalNum = screenData.num + "."
-      setScreenData({
-        num: decimalNum,
-        // ...screenData,
-        operator:screenData.operator,
-        prevNum:screenData.prevNum
-      });
+    let numToArr = String(screenData.num).split("");
+    numToArr.includes(".")
+      ? (decimalNum = screenData.num)
+      : (decimalNum = screenData.num + ".");
+    setScreenData({
+      num: decimalNum,
+      operator: screenData.operator,
+      prevNum: screenData.prevNum,
+    });
+  };
+
+  const percentClickHandler = (e) => {
+    let tempData = {
+      num: parseFloat(screenData.num / 100),
+      operator: screenData.operator,
+      prevNum: parseFloat(screenData.prevNum),
+    };
+    setScreenData(tempData);
   };
 
   return (
@@ -90,7 +124,7 @@ function App() {
       <>
         <br /> &nbsp;
         <input
-        type="text"
+          type="text"
           value={screenData.num === "" ? screenData.operator : screenData.num}
         />
         <br /> &nbsp;
@@ -113,7 +147,7 @@ function App() {
                     ? commaClickHandler
                     : btn >= 0 && btn <= 9
                     ? numClickHandler
-                    : null
+                    : percentClickHandler
                 }
               >
                 {btn}
