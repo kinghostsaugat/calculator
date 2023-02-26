@@ -13,14 +13,14 @@ function App() {
   const [screenData, setScreenData] = useState({
     num: "",
     operator: "",
-    prevNum: 0,
+    prevNum: "",
   });
 
   const resetClickHandler = () => {
     setScreenData({
       num: "",
       operator: "",
-      prevNum: 0,
+      prevNum: "",
     });
   };
 
@@ -122,38 +122,45 @@ function App() {
   return (
     <div className="App">
       <>
-        <br /> &nbsp;
-        <input
-          type="text"
-          value={screenData.num === "" ? screenData.operator : screenData.num}
-        />
-        <br /> &nbsp;
-        <div className="button-box">
-          {btnValues.flat().map((btn, i) => {
-            return (
-              <button
-                key={i}
-                value={btn}
-                onClick={
-                  btn === "C"
-                    ? resetClickHandler
-                    : btn === "+-"
-                    ? invertClickHandler
-                    : btn === "+" || btn === "-" || btn === "X" || btn === "/"
-                    ? operatorClickHandler
-                    : btn === "="
-                    ? equalsClickHandler
-                    : btn === "."
-                    ? commaClickHandler
-                    : btn >= 0 && btn <= 9
-                    ? numClickHandler
-                    : percentClickHandler
-                }
-              >
-                {btn}
-              </button>
-            );
-          })}
+        <div className="calculator">
+          <div className="display-box">
+            <input
+              type="text"
+              value={
+                screenData.num === "" && screenData.prevNum !== ""
+                  ? screenData.operator
+                  : screenData.num
+              }
+            />
+          </div>
+          <div className="button-box">
+            {btnValues.flat().map((btn, i) => {
+              return (
+                <button
+                  className={btn === "=" ? "equal-sign" : btn === "C"
+                  ? "all-clear" : ""}
+                  value={btn}
+                  onClick={
+                    btn === "C"
+                      ? resetClickHandler
+                      : btn === "+-"
+                      ? invertClickHandler
+                      : btn === "+" || btn === "-" || btn === "X" || btn === "/"
+                      ? operatorClickHandler
+                      : btn === "="
+                      ? equalsClickHandler
+                      : btn === "."
+                      ? commaClickHandler
+                      : btn >= 0 && btn <= 9
+                      ? numClickHandler
+                      : percentClickHandler
+                  }
+                >
+                  {btn}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </>
     </div>
